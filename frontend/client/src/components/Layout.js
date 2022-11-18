@@ -1,7 +1,7 @@
 import Navbar from 'components/Navbar';
 import { Helmet } from 'react-helmet';
 
-const Layout = ({title, children, content}) => (
+const Layout = ({children, content}) => (
 <>
 
   <Helmet>

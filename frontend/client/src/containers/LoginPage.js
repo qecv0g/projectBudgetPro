@@ -1,111 +1,78 @@
-import Layout from "components/Layout";
+import { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { Navigate } from 'react-router-dom';
+import { resetRegistered, login } from 'feature/auth';
+import Layout from 'components/Layout';
 
 const LoginPage = () => {
-//     console.log(logo);
+	const dispatch = useDispatch();
+	const { loading, isAuthenticated, registered } = useSelector(
+		state => state.user
+	);
 
-// const App = () => {
-//   const [errorMessages, setErrorMessages] = useState({});
-//   const [isSubmitted, setIsSubmitted] = useState(false);
+	const [formData, setFormData] = useState({
+		email: '',
+		password: '',
+	});
 
-//   const database = [
-//     {
-//       username: "user1",
-//       password: "pass1",
-//     },
-//     {
-//       username: "user2",
-//       password: "pass2",
-//     },
-//   ];
+	useEffect(() => {
+		if (registered) dispatch(resetRegistered());
+	}, [registered]);
 
-//   const errors = {
-//     uname: "invalid username",
-//     pass: "invalid password",
-//   };
+	const { email, password } = formData;
 
-//   const handleSubmit = (event) => {
-//     //Prevent page reload
-//     event.preventDefault();
+	const onChange = e => {
+		setFormData({ ...formData, [e.target.name]: e.target.value });
+	};
 
-//     var { uname, pass } = document.forms[0];
+	const onSubmit = e => {
+		e.preventDefault();
 
-//     // Find user login info
-//     const userData = database.find((user) => user.username === uname.value);
+		dispatch(login({ email, password }));
+	};
 
-//     // Compare user info
-//     if (userData) {
-//       if (userData.password !== pass.value) {
-//         // Invalid password
-//         setErrorMessages({ name: "pass", message: errors.pass });
-//       } else {
-//         setIsSubmitted(true);
-//       }
-//     } else {
-//       // Username not found
-//       setErrorMessages({ name: "uname", message: errors.uname });
-//     }
-//   };
+	if (isAuthenticated) return <Navigate to='/dashboard' />;
 
-//   const renderErrorMessage = (name) =>
-//     name === errorMessages.name && (
-//       <div className="error">{errorMessages.message}</div>
-//     );
-
-    const renderForm = (
-        
-    )
-    return (
-        <Layout title= 'Auth Site | Login' content = 'Login page'>
-        <h1>Login</h1>
-    
-
-          <div className="welcome"> Welcome Back!</div>
-          <div className="form">
-            <div className="input-container">
-              <label>Username </label>
-              <input type="text" name="uname" required />
-              
-            </div>
-    
-              <label>Password </label>
-              <input type="password" name="pass" required />
-            </div>
-            <div className="button-container">
-              <input type="submit" />
-            </div>
-          </form>
-          
-
-          <div className="login-form">
-            <div className="title">Log In</div>
-     
-        </div>
-
-        <div className="second">
-          <div className="vl">
-            {" "}
-            <p>
-              <b>NEW HERE?</b>
-            </p>
-          </div>
-          <div className="underNewh">
-            {" "}
-            <span>
-              <b>
-                Please, register and start managing <br></br>your money!
-              </b>
-            </span>
-          </div>
-
-          <button className="regB regBH">Register</button>
-        </div>
-      </div>
-    </div>
-
-
-        
-    </Layout>
-    );
+	return (
+		<Layout title='BudgetPro | Login' content='Login page'>
+			<h1>Log into your Account</h1>
+			<form className='mt-5' onSubmit={onSubmit}>
+				<div className='form-group'>
+					<label className='form-label' htmlFor='email'>
+						Email
+					</label>
+					<input
+						className='form-control'
+						type='email'
+						name='email'
+						onChange={onChange}
+						value={email}
+						required
+					/>
+				</div>
+				<div className='form-group mt-3'>
+					<label className='form-label' htmlFor='password'>
+						Password
+					</label>
+					<input
+						className='form-control'
+						type='password'
+						name='password'
+						onChange={onChange}
+						value={password}
+						required
+					/>
+				</div>
+				{loading ? (
+					<div className='spinner-border text-primary' role='status'>
+						<span className='visually-hidden'>Loading...</span>
+					</div>
+				) : (
+					<button className='btn btn-primary mt-4'>Login</button>
+				)}
+			</form>
+		</Layout>
+	);
 };
 
 export default LoginPage;

@@ -6,15 +6,16 @@ User = get_user_model()
 
 class UserCreationSerializer(serializers.ModelSerializer):
 
-    class Meta:
+    class Meta:  
         model = User
         fields = ('first_name', 'last_name', 'email', 'password')
 
     def validate(self,data):
-        usser = User(**data)
+        user = User(**data)
         password = data.get('password')
+        
         try:
-           validate_password(password)
+           validate_password(password,user)
         except exceptions.ValidationError as e:
             serializer_errors = serializers.as_serializer_error(e)
             raise exceptions.ValidationError(
@@ -24,7 +25,7 @@ class UserCreationSerializer(serializers.ModelSerializer):
 
 
     def create(self, validate_data):
-        user = user.objects.create_user(
+        user = User.objects.create_user(
             first_name = validate_data['first_name'],
             last_name = validate_data['last_name'],
            email = validate_data['email'],
@@ -37,4 +38,4 @@ class UserSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'email')        
+        fields = ('first_name', 'last_name', 'email',)        
